@@ -1,6 +1,6 @@
 # xOTA Companion
 
-A Windows desktop app for POTA and SOTA activators. Displays live spots from [POTAwatch](https://pota.app) and [SOTAwatch](https://sotawatch.sota.org.uk), integrates with [GreenLogger](https://www.greenlogger.com) for operator/radio management, supports CAT and TCI radio control, self-spotting, and interactive Mapbox maps.
+A Windows desktop app for POTA and SOTA activators. Displays live spots from [POTAwatch](https://pota.app) and [SOTAwatch](https://sotawatch.sota.org.uk). Can be used standalone but also integrates with [GreenLogger] for operator/radio management, supports CAT and TCI radio control, self-spotting, and interactive Mapbox maps.
 
 ---
 
