@@ -1,0 +1,8 @@
+<Project>
+  <!-- Redirect all build artifacts outside OneDrive to avoid sync conflicts and slow builds -->
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>C:\BuildCache\xOTACompanion\obj\</BaseIntermediateOutputPath>
+    <BaseOutputPath>C:\BuildCache\xOTACompanion\bin\</BaseOutputPath>
+    <MSBuildProjectExtensionsPath>C:\BuildCache\xOTACompanion\obj\</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>

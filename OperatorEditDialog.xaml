@@ -1,0 +1,78 @@
+<Window x:Class="xOTACompanion.OperatorEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:xOTACompanion"
+        xmlns:wc="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Operator"
+        Width="400" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None" ResizeMode="NoResize"
+        Background="{StaticResource DarkPanel}"
+        BorderThickness="1" BorderBrush="{StaticResource DarkBorder}"
+        AllowsTransparency="True">
+    <wc:WindowChrome.WindowChrome>
+        <wc:WindowChrome CaptionHeight="36" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </wc:WindowChrome.WindowChrome>
+    <StackPanel>
+        <Border Background="#FF2D2D30" Height="36" MouseLeftButtonDown="TitleBar_MouseDown">
+            <TextBlock Text="Edit Operator" Foreground="{StaticResource DarkText}" FontSize="{StaticResource TitleFontSize}"
+                       FontWeight="SemiBold" VerticalAlignment="Center" Margin="12,0"/>
+        </Border>
+        <StackPanel Margin="20,16,20,20" local:SP.Gap="10">
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="Callsign *" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="CallsignBox" Style="{StaticResource DarkTextBox}" CharacterCasing="Upper"/>
+            </StackPanel>
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="Name" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="NameBox" Style="{StaticResource DarkTextBox}"/>
+            </StackPanel>
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="Maidenhead Locator (e.g. IO91wm)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="LocatorBox" Style="{StaticResource DarkTextBox}" CharacterCasing="Upper"/>
+            </StackPanel>
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="SOTAwatch API Key (Bearer token)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="SotaKeyBox" Grid.Column="0"
+                                 Background="{StaticResource InputBackground}" Foreground="{StaticResource DarkText}"
+                                 BorderBrush="{StaticResource InputBorder}" BorderThickness="1" Height="26" Padding="6,0"/>
+                    <Button Grid.Column="1" Content="Fetch…" Style="{StaticResource SecondaryButton}"
+                            Height="26" Margin="6,0,0,0" Click="FetchToken_Click"/>
+                </Grid>
+                <!-- Inline fetch panel -->
+                <Border x:Name="SotaTokenPanel" Visibility="Collapsed"
+                        Background="{StaticResource DarkBackground}"
+                        BorderBrush="{StaticResource DarkBorder}" BorderThickness="1" Padding="8,8,8,8">
+                    <StackPanel local:SP.Gap="6">
+                        <TextBlock Text="SOTAwatch username / email"
+                                   Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                        <TextBox x:Name="SotaUsernameBox" Style="{StaticResource DarkTextBox}"/>
+                        <TextBlock Text="Password"
+                                   Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                        <PasswordBox x:Name="SotaPasswordBox"
+                                     Background="{StaticResource InputBackground}" Foreground="{StaticResource DarkText}"
+                                     BorderBrush="{StaticResource InputBorder}" BorderThickness="1" Height="26" Padding="6,0"/>
+                        <StackPanel Orientation="Horizontal" local:SP.Gap="8">
+                            <Button x:Name="GetTokenButton" Content="Get Token"
+                                    Style="{StaticResource DarkButton}" Click="GetToken_Click"/>
+                            <TextBlock x:Name="SotaTokenStatus"
+                                       Foreground="{StaticResource ErrorRed}"
+                                       VerticalAlignment="Center" FontSize="11" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <CheckBox x:Name="IsDefaultCheck" Content="Use as default operator" Style="{StaticResource DarkCheckBox}"/>
+            <Separator Background="{StaticResource DataGridGridLines}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" local:SP.Gap="8">
+                <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Width="80" Click="Cancel_Click"/>
+                <Button Content="Save" Style="{StaticResource DarkButton}" Width="80" IsDefault="True" Click="Save_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>

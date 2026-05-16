@@ -1,0 +1,95 @@
+<Window x:Class="xOTACompanion.SelfSpotDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:xOTACompanion"
+        xmlns:wc="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Self-Spot"
+        Width="440" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None" ResizeMode="NoResize"
+        Background="{StaticResource DarkPanel}"
+        BorderThickness="1" BorderBrush="{StaticResource DarkBorder}"
+        AllowsTransparency="True">
+    <wc:WindowChrome.WindowChrome>
+        <wc:WindowChrome CaptionHeight="36" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </wc:WindowChrome.WindowChrome>
+    <StackPanel>
+        <!-- Title -->
+        <Border Background="#FF2D2D30" Height="36" MouseLeftButtonDown="TitleBar_MouseDown">
+            <TextBlock Text="📡 Self-Spot" Foreground="{StaticResource DarkText}" FontSize="{StaticResource TitleFontSize}"
+                       FontWeight="SemiBold" VerticalAlignment="Center" Margin="12,0"/>
+        </Border>
+
+        <StackPanel Margin="20,16,20,20" local:SP.Gap="10">
+            <!-- Source tabs -->
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="PROGRAMME" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" local:SP.Gap="8">
+                    <RadioButton x:Name="PotaRadio" Content="POTA" Foreground="{StaticResource DarkText}"
+                                 FontSize="{StaticResource ContentFontSize}" GroupName="source"
+                                 Checked="Source_Changed"/>
+                    <RadioButton x:Name="SotaRadio" Content="SOTA" Foreground="{StaticResource DarkText}"
+                                 FontSize="{StaticResource ContentFontSize}" GroupName="source"
+                                 Checked="Source_Changed"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Callsign -->
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="MY CALLSIGN" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="CallsignBox" Style="{StaticResource DarkTextBox}" CharacterCasing="Upper"/>
+            </StackPanel>
+
+            <!-- Reference (park / summit) -->
+            <StackPanel local:SP.Gap="4">
+                <TextBlock x:Name="RefLabel" Text="PARK REFERENCE  (e.g. K-0001)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="ReferenceBox" Style="{StaticResource DarkTextBox}" CharacterCasing="Upper"/>
+            </StackPanel>
+
+            <!-- Frequency + Mode row -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel local:SP.Gap="4">
+                    <TextBlock Text="FREQUENCY (MHz)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                    <TextBox x:Name="FreqBox" Style="{StaticResource DarkTextBox}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" local:SP.Gap="4">
+                    <TextBlock Text="MODE" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                    <ComboBox x:Name="ModeCombo" Style="{StaticResource DarkComboBox}">
+                        <ComboBoxItem Content="SSB"/>
+                        <ComboBoxItem Content="USB"/>
+                        <ComboBoxItem Content="LSB"/>
+                        <ComboBoxItem Content="CW"/>
+                        <ComboBoxItem Content="AM"/>
+                        <ComboBoxItem Content="FM"/>
+                        <ComboBoxItem Content="FT8"/>
+                        <ComboBoxItem Content="FT4"/>
+                        <ComboBoxItem Content="DIGI"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <!-- Comment -->
+            <StackPanel local:SP.Gap="4">
+                <TextBlock Text="COMMENT (optional)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
+                <TextBox x:Name="CommentBox" Style="{StaticResource DarkTextBox}"/>
+            </StackPanel>
+
+            <!-- Status -->
+            <TextBlock x:Name="StatusText" Foreground="{StaticResource SuccessGreen}" FontSize="{StaticResource ContentFontSize}"
+                       TextWrapping="Wrap" Visibility="Collapsed"/>
+
+            <Separator Background="{StaticResource DataGridGridLines}"/>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" local:SP.Gap="8">
+                <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Width="80" Click="Cancel_Click"/>
+                <Button x:Name="SpotButton" Content="📡 Post Spot" Style="{StaticResource DarkButton}" Width="110" Click="Spot_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>

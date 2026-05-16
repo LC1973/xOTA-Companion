@@ -1,0 +1,269 @@
+<Window x:Class="xOTACompanion.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:xOTACompanion"
+        xmlns:wc="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="xOTA Companion"
+        MinWidth="900" MinHeight="500"
+        WindowStyle="None"
+        Background="{StaticResource DarkBackground}"
+        BorderThickness="1" BorderBrush="{StaticResource DarkBorder}"
+        AllowsTransparency="True"
+        Closing="Window_Closing">
+
+    <wc:WindowChrome.WindowChrome>
+        <wc:WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"
+                         ResizeBorderThickness="5"/>
+    </wc:WindowChrome.WindowChrome>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>     <!-- Title bar -->
+            <RowDefinition Height="40"/>     <!-- Toolbar -->
+            <RowDefinition Height="34"/>     <!-- Filter bar -->
+            <RowDefinition Height="*"/>      <!-- Spots grid -->
+            <RowDefinition Height="24"/>     <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════ TITLE BAR ═══════════════ -->
+        <Border Grid.Row="0" Background="#FF2D2D30" BorderThickness="0,0,0,1" BorderBrush="#FF3E3E42"
+                MouseLeftButtonDown="TitleBar_MouseDown">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                    <TextBlock Text="📻" FontSize="16" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="xOTA Companion" Foreground="{StaticResource DarkText}"
+                               FontSize="{StaticResource TitleFontSize}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Operator + radio status (centre) -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" local:SP.Gap="14">
+                    <TextBlock x:Name="OperatorLabel" Foreground="{StaticResource InfoCyan}"
+                               FontSize="{StaticResource ContentFontSize}" FontWeight="SemiBold"/>
+                    <TextBlock Foreground="{StaticResource DarkBorder}" Text="|" VerticalAlignment="Center"/>
+                    <Ellipse x:Name="RadioDot" Width="10" Height="10" Fill="{StaticResource ErrorRed}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RadioLabel" Foreground="{StaticResource DarkTextSecondary}"
+                               FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="FreqModeLabel" Foreground="#FF00CC00"
+                               FontSize="{StaticResource ContentFontSize}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Window controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Content="─" Width="40" Height="38" Background="Transparent" BorderThickness="0"
+                            Foreground="{StaticResource DarkTextSecondary}" FontSize="12"
+                            Click="Minimize_Click">
+                        <Button.Style><Style TargetType="Button"><Setter Property="Template"><Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="b" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="#33FFFFFF"/></Trigger></ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value></Setter></Style></Button.Style>
+                    </Button>
+                    <Button x:Name="MaxRestoreBtn" Content="□" Width="40" Height="38" Background="Transparent" BorderThickness="0"
+                            Foreground="{StaticResource DarkTextSecondary}" FontSize="12"
+                            Click="MaxRestore_Click">
+                        <Button.Style><Style TargetType="Button"><Setter Property="Template"><Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="b" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="#33FFFFFF"/></Trigger></ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value></Setter></Style></Button.Style>
+                    </Button>
+                    <Button Content="✕" Width="40" Height="38" Background="Transparent" BorderThickness="0"
+                            Foreground="{StaticResource DarkTextSecondary}" FontSize="12"
+                            Click="CloseBtn_Click">
+                        <Button.Style><Style TargetType="Button"><Setter Property="Template"><Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="b" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="{StaticResource CloseButtonRed}"/><Setter Property="Foreground" Value="White"/></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value></Setter></Style></Button.Style>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════ TOOLBAR ═══════════════ -->
+        <Border Grid.Row="1" Background="{StaticResource DarkPanel}" BorderThickness="0,0,0,1" BorderBrush="{StaticResource DarkBorder}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0" local:SP.Gap="6">
+                <Button Content="⟳ Refresh" Style="{StaticResource DarkButton}" Width="90" Height="26" Click="Refresh_Click"/>
+                <TextBlock x:Name="LastRefreshLabel" Foreground="{StaticResource DarkTextHint}" FontSize="11"
+                           VerticalAlignment="Center" Margin="4,0"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Margin="4,0" Height="22"/>
+                <Button Content="📡 Self-Spot" Style="{StaticResource SecondaryButton}" Width="100" Height="26" Click="SelfSpot_Click"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Margin="4,0" Height="22"/>
+                <Button x:Name="MapButton" Content="🗺 Map" Style="{StaticResource SecondaryButton}" Width="74" Height="26"
+                        IsEnabled="False" Click="Map_Click"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Margin="4,0" Height="22"/>
+                <Button Content="⚙ Settings" Style="{StaticResource SecondaryButton}" Width="90" Height="26" Click="Settings_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══════════════ FILTER BAR ═══════════════ -->
+        <Border Grid.Row="2" Background="{StaticResource DarkPanel}" BorderThickness="0,0,0,1" BorderBrush="{StaticResource DataGridGridLines}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0" local:SP.Gap="6">
+                <RadioButton x:Name="AllFilter" Content="All" Style="{StaticResource FilterTab}"
+                             IsChecked="True" Checked="Filter_Changed" GroupName="src"/>
+                <RadioButton x:Name="PotaFilter" Content="🌳 POTA" Style="{StaticResource FilterTab}"
+                             Checked="Filter_Changed" GroupName="src"/>
+                <RadioButton x:Name="SotaFilter" Content="⛰ SOTA" Style="{StaticResource FilterTab}"
+                             Checked="Filter_Changed" GroupName="src"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Height="20" Margin="4,0"/>
+                <TextBlock Text="Band:" Foreground="{StaticResource DarkTextSecondary}" FontSize="11" VerticalAlignment="Center"/>
+                <ComboBox x:Name="BandFilter" Style="{StaticResource DarkComboBox}" Width="80" Height="22"
+                          SelectionChanged="Filter_Changed"/>
+                <TextBlock Text="Mode:" Foreground="{StaticResource DarkTextSecondary}" FontSize="11" VerticalAlignment="Center"/>
+                <ComboBox x:Name="ModeFilter" Style="{StaticResource DarkComboBox}" Width="80" Height="22"
+                          SelectionChanged="Filter_Changed"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Height="20" Margin="4,0"/>
+                <TextBox x:Name="SearchBox" Style="{StaticResource DarkTextBox}" Width="140" Height="22"
+                         Tag="Search…" TextChanged="Filter_Changed"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Height="20" Margin="4,0"/>
+                <CheckBox x:Name="RemoveQrtFilter" Content="Remove QRT" Foreground="{StaticResource DarkTextSecondary}"
+                          FontSize="11" VerticalAlignment="Center" Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <Separator Width="1" Background="{StaticResource DarkBorder}" Height="20" Margin="4,0"/>
+                <CheckBox x:Name="TuneOnSelectFilter" Content="Tune on Select" Foreground="{StaticResource DarkTextSecondary}"
+                          FontSize="11" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══════════════ SPOTS GRID ═══════════════ -->
+        <DataGrid Grid.Row="3" x:Name="SpotsGrid"
+                  Style="{StaticResource DarkDataGrid}"
+                  ColumnHeaderStyle="{StaticResource DarkDataGridColumnHeader}"
+                  RowStyle="{StaticResource DarkDataGridRow}"
+                  CellStyle="{StaticResource DarkDataGridCell}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  GridLinesVisibility="Horizontal"
+                  CanUserReorderColumns="False"
+                  CanUserResizeRows="False"
+                  CanUserSortColumns="True"
+                  EnableRowVirtualization="True"
+                  SelectionChanged="SpotsGrid_SelectionChanged"
+                  MouseDoubleClick="SpotsGrid_DoubleClick"
+                  KeyDown="SpotsGrid_KeyDown">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Src"       Binding="{Binding SourceIcon}" Width="36"   CanUserSort="True"/>
+                <DataGridTemplateColumn Header="Activator" Width="100" CanUserSort="True" SortMemberPath="Activator">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center" Padding="6,0">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu Background="{StaticResource DarkPanel}" BorderBrush="{StaticResource DarkBorder}">
+                                        <ContextMenu.Resources>
+                                            <Style TargetType="MenuItem">
+                                                <Setter Property="Background" Value="{StaticResource DarkPanel}"/>
+                                                <Setter Property="Foreground" Value="{StaticResource DarkText}"/>
+                                                <Setter Property="FontSize" Value="{StaticResource ContentFontSize}"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="MenuItem">
+                                                            <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderThickness="0" Padding="12,6">
+                                                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsHighlighted" Value="True">
+                                                                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource SelectionHighlight}"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ContextMenu.Resources>
+                                        <MenuItem Header="📋 Copy Callsign" Click="CopyCallsign_Click"/>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                                <Hyperlink Click="ActivatorLink_Click" Foreground="{StaticResource InfoCyan}" TextDecorations="None">
+                                    <Run Text="{Binding Activator}"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Reference" Binding="{Binding Reference}"  Width="90"   CanUserSort="True"/>
+                <DataGridTextColumn Header="Name"      Binding="{Binding Name}"       Width="*"    CanUserSort="True"/>
+                <DataGridTextColumn Header="Freq"      Binding="{Binding FrequencyDisplay}" Width="80" CanUserSort="True"/>
+                <DataGridTextColumn Header="Mode"      Binding="{Binding Mode}"       Width="55"   CanUserSort="True"/>
+                <DataGridTextColumn Header="Band"      Binding="{Binding Band}"       Width="50"   CanUserSort="True"/>
+                <DataGridTextColumn Header="#"         Binding="{Binding SpotCount}"  Width="36"   CanUserSort="True"/>
+                <DataGridTextColumn Header="Dist"      Binding="{Binding DistanceDisplay}" Width="68" CanUserSort="True" SortMemberPath="DistanceKm"/>
+                <DataGridTextColumn Header="Age"       Binding="{Binding AgeDisplay}" Width="60"   CanUserSort="True" SortMemberPath="SpottedUtc"/>
+                <DataGridTextColumn Header="Comments"  Binding="{Binding Comments}"   Width="160"  CanUserSort="False"/>
+            </DataGrid.Columns>
+
+            <DataGrid.ContextMenu>
+                <ContextMenu Background="{StaticResource DarkPanel}" BorderBrush="{StaticResource DarkBorder}"
+                             Foreground="{StaticResource DarkText}" FontSize="{StaticResource ContentFontSize}">
+                    <ContextMenu.Resources>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Background" Value="{StaticResource DarkPanel}"/>
+                            <Setter Property="Foreground" Value="{StaticResource DarkText}"/>
+                            <Setter Property="FontSize" Value="{StaticResource ContentFontSize}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="MenuItem">
+                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderThickness="0" Padding="12,6">
+                                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsHighlighted" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource SelectionHighlight}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Foreground" Value="{StaticResource DarkTextMuted}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="Separator">
+                            <Setter Property="Height" Value="1"/>
+                            <Setter Property="Background" Value="{StaticResource DarkBorder}"/>
+                            <Setter Property="Margin" Value="8,2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Separator">
+                                        <Border Height="1" Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ContextMenu.Resources>
+                    <MenuItem Header="🎚 Tune Radio"  Click="ContextTune_Click"/>
+                    <MenuItem Header="🗺 Open Map"    Click="ContextMap_Click"/>
+                    <MenuItem Header="📡 Self-Spot"   Click="ContextSelfSpot_Click"/>
+                    <Separator/>
+                    <MenuItem Header="⟳ Refresh Spots" Click="Refresh_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+
+        <!-- ═══════════════ STATUS BAR ═══════════════ -->
+        <Border Grid.Row="4" Background="{StaticResource DarkPanel}" BorderThickness="0,1,0,0" BorderBrush="{StaticResource DarkBorder}">
+            <Grid Margin="8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="StatusLabel" Foreground="{StaticResource DarkTextSecondary}" FontSize="11"
+                           VerticalAlignment="Center"/>
+                <TextBlock x:Name="StatusRight" Grid.Column="1" Foreground="{StaticResource DarkTextHint}" FontSize="11"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

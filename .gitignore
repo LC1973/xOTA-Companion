@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+*.user
+
+# Visual Studio
+.vs/
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Publish output (built outside project by deploy.ps1)
+publish/
+
+# User config (contains API keys / tokens — never commit)
+config.json
+*.config.json
+
+# Log files
+*.log
+Logs/
+
+# WebView2 user data
+EBWebView/
+WebView2UserData/
+
+# OS
+Thumbs.db
+.DS_Store
