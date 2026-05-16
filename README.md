@@ -1,6 +1,25 @@
 # xOTA Companion
 
-A Windows desktop app for POTA and SOTA activators. Displays live spots from [POTAwatch](https://pota.app) and [SOTAwatch](https://sotawatch.sota.org.uk), integrates with [GreenLogger](https://www.greenlogger.com) for operator/radio management, supports CAT and TCI radio control, self-spotting, and interactive Mapbox maps.
+A Windows desktop app for POTA and SOTA spot-chasers and activators. Pulls live spots from [POTAwatch](https://pota.app) and [SOTAwatch](https://sotawatch.sota.org.uk), tunes your radio automatically, maps the distance from your location to every spot, and lets you self-spot with one click.
+
+## Features
+
+- **Auto spot download** — spots refresh automatically on a configurable interval (default 2 min) from POTA and/or SOTA sources; manual refresh always available
+- **Map each spot** — opens an interactive Mapbox map showing your location, the activator's location, and the distance between them
+- **Distance display** — straight-line distance (km or miles) calculated from your Maidenhead locator to each spot, shown in the spot list
+- **Auto radio tune** — select a spot to instantly QSY your radio to the correct frequency and mode; no manual dial-twisting
+- **Self-spotting** — post your own activation directly to SOTAwatch from within the app; uses your stored SOTA API key (fetched via built-in Keycloak login)
+- **GreenLogger integration** — reads your operator and radio profiles automatically from a local GreenLogger database (read-only)
+- **Dark UI** — easy on the eyes in a dark shack
+
+### Tested hardware
+
+| Radio | Interface |
+|---|---|
+| Expert Electronics ExpertSDR v3 | TCI |
+| Yaesu FTX-1 | CAT (CI-V serial) |
+
+Other TCI-capable SDRs and CAT-compatible rigs should work but have not been tested. Please open an issue if you have results to share.
 
 ---
 
