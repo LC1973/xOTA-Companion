@@ -21,12 +21,14 @@ namespace xOTACompanion.Services
         public event Action<bool>? TXModeChanged;
 
         // CI-V constants
-        private const byte CtrlAddr = 0xE0;   // controller (PC) address
-        private const byte CmdSetFreq  = 0x05;
-        private const byte CmdReadFreq = 0x03;
-        private const byte CmdSetMode  = 0x06;
-        private const byte CmdReadMode = 0x04;
-        private const byte CmdTxStatus = 0x1C;
+        private const byte CtrlAddr       = 0xE0;   // controller (PC) address
+        private const byte CmdFreqPush    = 0x00;   // radio→controller spontaneous frequency
+        private const byte CmdModePush    = 0x01;   // radio→controller spontaneous mode
+        private const byte CmdSetFreq     = 0x05;
+        private const byte CmdReadFreq    = 0x03;
+        private const byte CmdSetMode     = 0x06;
+        private const byte CmdReadMode    = 0x04;
+        private const byte CmdTxStatus    = 0x1C;
 
         private readonly string _portName;
         private readonly int    _baudRate;
@@ -249,14 +251,16 @@ namespace xOTACompanion.Services
 
             switch (cmd)
             {
+                case CmdFreqPush when dataLen == 5:
                 case CmdReadFreq when dataLen == 5:
-                    // Response to "read frequency" (0x03) – 5 BCD bytes at offset 5
+                    // Spontaneous (0x00) or polled (0x03) frequency – 5 BCD bytes at offset 5
                     _freq = BcdToHz(frame, 5) / 1_000_000.0;
                     RadioInfoUpdated?.Invoke(_freq, _mode, _power);
                     break;
 
+                case CmdModePush when dataLen >= 1:
                 case CmdReadMode when dataLen >= 1:
-                    // Response to "read mode" (0x04) – mode byte at offset 5
+                    // Spontaneous (0x01) or polled (0x04) mode – mode byte at offset 5
                     _mode = ModeFromByte(frame[5]);
                     RadioInfoUpdated?.Invoke(_freq, _mode, _power);
                     break;
