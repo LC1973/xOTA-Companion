@@ -8,10 +8,22 @@
 			"options": {
 				"shell": {
 					"executable": "powershell.exe",
-					"args": ["-NoProfile", "-Command"]
+					"args": [
+						"-NoProfile",
+						"-Command"
+					]
 				}
 			},
 			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build xOTA Companion",
+			"type": "shell",
+			"command": "dotnet build xOTACompanion.sln --configuration Release",
+			"problemMatcher": [
+				"$msCompile"
+			],
 			"group": "build"
 		}
 	]

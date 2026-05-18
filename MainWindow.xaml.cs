@@ -122,6 +122,7 @@ namespace xOTACompanion
             {
                 "CAT" => new CATService(rc.CATPortName, rc.CATBaudRate),
                 "TCI" => new TCIService(rc.TCIHost, rc.TCIPort),
+                "CIV" => new CIVService(rc.CATPortName, rc.CATBaudRate, (byte)rc.CIVAddress),
                 _     => null
             };
             if (svc == null) return;
@@ -364,8 +365,22 @@ namespace xOTACompanion
             if (sender is System.Windows.Documents.Hyperlink link &&
                 link.DataContext is SpotModel spot)
             {
-                var url = $"https://www.qrz.com/db/{Uri.EscapeDataString(spot.Activator)}";
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+                // Strip portable/prefix parts: EI/G7NRU/P → G7NRU (longest segment)
+                var callsign = spot.Activator.Trim().ToUpperInvariant()
+                    .Split('/')
+                    .OrderByDescending(s => s.Length)
+                    .First();
+                var url = $"https://www.qrz.com/db/{callsign}";
+                try
+                {
+                    System.Diagnostics.Process.Start(
+                        new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.Log(LogCategory.General, $"QRZ link failed: {ex.Message}");
+                    DarkMessageBox.Show($"Could not open browser.\n{ex.Message}", "QRZ", owner: this);
+                }
             }
         }
 

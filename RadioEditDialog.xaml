@@ -29,6 +29,7 @@
                     <ComboBoxItem Content="None"/>
                     <ComboBoxItem Content="CAT"/>
                     <ComboBoxItem Content="TCI"/>
+                    <ComboBoxItem Content="CI-V (ICOM)"/>
                 </ComboBox>
             </StackPanel>
 
@@ -46,6 +47,16 @@
                         <TextBlock Text="Baud Rate" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold"/>
                         <ComboBox x:Name="BaudCombo" Style="{StaticResource DarkComboBox}"/>
                     </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <!-- CI-V extra settings (address) – shown together with CatPanel when CI-V is selected -->
+            <StackPanel x:Name="CivPanel" local:SP.Gap="4" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="CI-V Address (hex)" Foreground="{StaticResource DarkTextSecondary}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBox x:Name="CivAddressBox" Grid.Column="2" Style="{StaticResource DarkTextBox}" Text="94"
+                             ToolTip="Hexadecimal CI-V address shown in the radio&#x0a;menu (e.g. 94 for IC-7300, A4 for IC-705)."/>
                 </Grid>
             </StackPanel>
 

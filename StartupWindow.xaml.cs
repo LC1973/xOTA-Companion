@@ -80,6 +80,7 @@ namespace xOTACompanion
                 {
                     "TCI" => $"TCI: {rc.TCIHost}:{rc.TCIPort}",
                     "CAT" => $"CAT serial: {rc.CATPortName} @ {rc.CATBaudRate} baud",
+                    "CIV" => $"CI-V: {rc.CATPortName} @ {rc.CATBaudRate} baud (addr 0x{rc.CIVAddress:X2})",
                     _     => "No radio connection"
                 };
             }

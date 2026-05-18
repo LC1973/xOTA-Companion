@@ -33,7 +33,8 @@ namespace xOTACompanion
             TciPortBox.Text   = radio.TCIPort.ToString();
             IsDefaultCheck.IsChecked = radio.IsDefault;
 
-            TypeCombo.SelectedIndex = radio.ControlType switch { "CAT" => 1, "TCI" => 2, _ => 0 };
+            TypeCombo.SelectedIndex = radio.ControlType switch { "CAT" => 1, "TCI" => 2, "CIV" => 3, _ => 0 };
+            CivAddressBox.Text = radio.CIVAddress.ToString("X2");
             CatPortCombo.SelectedItem = radio.CATPortName;
             BaudCombo.SelectedItem    = radio.CATBaudRate;
             if (BaudCombo.SelectedItem == null) BaudCombo.SelectedItem = 38400;
@@ -42,7 +43,9 @@ namespace xOTACompanion
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var t = (TypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "None";
-            CatPanel.Visibility = t == "CAT" ? Visibility.Visible : Visibility.Collapsed;
+            bool isSerial = t == "CAT" || t == "CI-V (ICOM)";
+            CatPanel.Visibility = isSerial ? Visibility.Visible : Visibility.Collapsed;
+            CivPanel.Visibility = t == "CI-V (ICOM)" ? Visibility.Visible : Visibility.Collapsed;
             TciPanel.Visibility = t == "TCI" ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -55,12 +58,16 @@ namespace xOTACompanion
             }
 
             Radio.FriendlyName = NameBox.Text.Trim();
-            Radio.ControlType  = (TypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "None";
+            var selectedType   = (TypeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "None";
+            Radio.ControlType  = selectedType == "CI-V (ICOM)" ? "CIV" : selectedType;
             Radio.IsDefault    = IsDefaultCheck.IsChecked == true;
             Radio.CATPortName  = CatPortCombo.SelectedItem?.ToString() ?? string.Empty;
             Radio.CATBaudRate  = BaudCombo.SelectedItem is int br ? br : 38400;
             Radio.TCIHost      = TciHostBox.Text.Trim();
             if (int.TryParse(TciPortBox.Text, out int p)) Radio.TCIPort = p;
+            if (int.TryParse(CivAddressBox.Text.TrimStart('0', 'x'), System.Globalization.NumberStyles.HexNumber,
+                             null, out int civAddr))
+                Radio.CIVAddress = civAddr;
 
             if (!Radio.IsValid())
             {
