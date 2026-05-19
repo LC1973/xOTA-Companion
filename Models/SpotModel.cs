@@ -60,7 +60,13 @@ namespace xOTACompanion.Models
             }
         }
 
-        public string SourceIcon => Source == SpotSource.POTA ? "\U0001F333" : "\u26F0";
+        public string SourceIcon => Source switch
+        {
+            SpotSource.POTA   => "\U0001F333",  // 🌳
+            SpotSource.SOTA   => "\u26F0",       // ⛰
+            SpotSource.WWBOTA => "\U0001F3F0",  // 🏰
+            _                 => "?"
+        };
 
         public bool HasLocation => (!string.IsNullOrWhiteSpace(Grid) && Grid.Length >= 4)
                                 || (Latitude.HasValue && Longitude.HasValue);
@@ -84,5 +90,5 @@ namespace xOTACompanion.Models
         };
     }
 
-    public enum SpotSource { POTA, SOTA }
+    public enum SpotSource { POTA, SOTA, WWBOTA }
 }

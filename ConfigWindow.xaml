@@ -71,8 +71,9 @@
 
                 <TextBlock Text="SOURCES TO SHOW" Foreground="{StaticResource DarkTextSecondary}"
                            FontSize="{StaticResource SmallFontSize}" FontWeight="Bold"/>
-                <CheckBox x:Name="ShowPotaCheck" Content="POTA  (Parks on the Air)" Style="{StaticResource DarkCheckBox}"/>
-                <CheckBox x:Name="ShowSotaCheck" Content="SOTA  (Summits on the Air)" Style="{StaticResource DarkCheckBox}"/>
+                <CheckBox x:Name="ShowPotaCheck"  Content="POTA  (Parks on the Air)"   Style="{StaticResource DarkCheckBox}"/>
+                <CheckBox x:Name="ShowSotaCheck"  Content="SOTA  (Summits on the Air)" Style="{StaticResource DarkCheckBox}"/>
+                <CheckBox x:Name="ShowWwbotaCheck" Content="BOTA  (Bunkers on the Air)" Style="{StaticResource DarkCheckBox}"/>
 
                 <Separator Background="{StaticResource DataGridGridLines}" Margin="0,4"/>
 
@@ -101,6 +102,13 @@
                         <TextBox x:Name="MyLocatorBox" Style="{StaticResource DarkTextBox}" Width="120"/>
                         <TextBlock Text="(Maidenhead, e.g. IO91wm)" Foreground="{StaticResource DarkTextSecondary}"
                                    FontSize="{StaticResource SmallFontSize}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" local:SP.Gap="8">
+                        <TextBlock Text="Mapbox Token" Width="70" Foreground="{StaticResource DarkText}"
+                                   FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <TextBox x:Name="MapboxTokenBox" Style="{StaticResource DarkTextBox}" Width="280"
+                                 ToolTip="Free token from mapbox.com — starts with pk.eyJ1..."/>
                     </StackPanel>
                 </StackPanel>
 

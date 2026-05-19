@@ -158,8 +158,9 @@ namespace xOTACompanion.Services
                 "CW"                                  => 0x03,
                 "RTTY" or "FSK"                       => 0x04,
                 "FM"                                  => 0x05,
-                "CWR"                                 => 0x06,
-                "RTTYR"                               => 0x07,
+                // 0x06 = Wide FM (not present on IC-7300/705/7610/9700)
+                "CWR"                                 => 0x07,
+                "RTTYR"                               => 0x08,
                 "SSB"                                 => 0x01,   // treat as USB
                 "DATA" or "DIGI" or "FT8" or "FT4"   => 0x01,   // USB for digital
                 _                                     => 0x01,
@@ -392,8 +393,9 @@ namespace xOTACompanion.Services
             0x03 => "CW",
             0x04 => "RTTY",
             0x05 => "FM",
-            0x06 => "CWR",
-            0x07 => "RTTYR",
+            // 0x06 = Wide FM (not used on IC-7300/705/7610/9700)
+            0x07 => "CWR",
+            0x08 => "RTTYR",
             _    => "USB",
         };
 

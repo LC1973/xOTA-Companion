@@ -31,6 +31,9 @@
                     <RadioButton x:Name="SotaRadio" Content="SOTA" Foreground="{StaticResource DarkText}"
                                  FontSize="{StaticResource ContentFontSize}" GroupName="source"
                                  Checked="Source_Changed"/>
+                    <RadioButton x:Name="BotaRadio" Content="BOTA" Foreground="{StaticResource DarkText}"
+                                 FontSize="{StaticResource ContentFontSize}" GroupName="source"
+                                 Checked="Source_Changed"/>
                 </StackPanel>
             </StackPanel>
 

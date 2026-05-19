@@ -2,7 +2,7 @@ using System.IO;
 
 namespace xOTACompanion.Services
 {
-    public enum LogCategory { General, Radio, CAT, TCI, POTA, SOTA, Map, UI }
+    public enum LogCategory { General, Radio, CAT, TCI, POTA, SOTA, WWBOTA, Map, UI }
 
     /// <summary>Simple file + in-memory logger.</summary>
     public class Logger

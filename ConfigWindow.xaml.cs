@@ -19,9 +19,10 @@ namespace xOTACompanion
 
         private void LoadValues()
         {
-            RefreshBox.Text         = _config.AutoRefreshMinutes.ToString();
-            ShowPotaCheck.IsChecked = _config.ShowPota;
-            ShowSotaCheck.IsChecked = _config.ShowSota;
+            RefreshBox.Text          = _config.AutoRefreshMinutes.ToString();
+            ShowPotaCheck.IsChecked  = _config.ShowPota;
+            ShowSotaCheck.IsChecked  = _config.ShowSota;
+            ShowWwbotaCheck.IsChecked = _config.ShowWwbota;
             KmRadio.IsChecked       = _config.DistanceUnit != "mi";
             MiRadio.IsChecked       = _config.DistanceUnit == "mi";
 
@@ -31,6 +32,7 @@ namespace xOTACompanion
                 RadiosSection.Visibility  = Visibility.Visible;
                 MyCallsignBox.Text        = _config.MyCallsign;
                 MyLocatorBox.Text         = _config.MyLocator;
+                MapboxTokenBox.Text       = _config.MapboxAccessToken;
                 RefreshRadioList();
             }
 
@@ -80,14 +82,16 @@ namespace xOTACompanion
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(RefreshBox.Text, out int mins)) _config.AutoRefreshMinutes = Math.Max(0, mins);
-            _config.ShowPota     = ShowPotaCheck.IsChecked == true;
-            _config.ShowSota     = ShowSotaCheck.IsChecked == true;
+            _config.ShowPota     = ShowPotaCheck.IsChecked  == true;
+            _config.ShowSota     = ShowSotaCheck.IsChecked  == true;
+            _config.ShowWwbota   = ShowWwbotaCheck.IsChecked == true;
             _config.DistanceUnit = MiRadio.IsChecked == true ? "mi" : "km";
 
             if (StationSection.Visibility == Visibility.Visible)
             {
-                _config.MyCallsign = MyCallsignBox.Text.Trim().ToUpperInvariant();
-                _config.MyLocator  = MyLocatorBox.Text.Trim().ToUpperInvariant();
+                _config.MyCallsign        = MyCallsignBox.Text.Trim().ToUpperInvariant();
+                _config.MyLocator         = MyLocatorBox.Text.Trim().ToUpperInvariant();
+                _config.MapboxAccessToken = MapboxTokenBox.Text.Trim();
             }
 
             DialogResult = true;

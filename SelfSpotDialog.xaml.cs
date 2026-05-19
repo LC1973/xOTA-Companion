@@ -8,9 +8,10 @@ namespace xOTACompanion
 {
     public partial class SelfSpotDialog : Window
     {
-        private readonly AppConfig _config;
-        private readonly PotaService _pota = new();
-        private readonly SotaService _sota = new();
+        private readonly AppConfig    _config;
+        private readonly PotaService   _pota   = new();
+        private readonly SotaService   _sota   = new();
+        private readonly WwbotaService _wwbota = new();
 
         /// <param name="config">Application config (for operator lookup and API keys).</param>
         /// <param name="currentFreqMhz">Pre-filled frequency in MHz, or null.</param>
@@ -47,6 +48,8 @@ namespace xOTACompanion
             if (RefLabel == null) return;
             if (PotaRadio.IsChecked == true)
                 RefLabel.Text = "PARK REFERENCE  (e.g. K-0001)";
+            else if (BotaRadio.IsChecked == true)
+                RefLabel.Text = "BUNKER REFERENCE  (e.g. B/G-2114)";
             else
                 RefLabel.Text = "SUMMIT CODE  (e.g. G/SP-001)";
         }
@@ -74,6 +77,15 @@ namespace xOTACompanion
                         CallsignBox.Text.Trim().ToUpperInvariant(),
                         ReferenceBox.Text.Trim().ToUpperInvariant(),
                         freqMhz * 1000.0,   // PotaService expects kHz
+                        mode,
+                        CommentBox.Text.Trim());
+                }
+                else if (BotaRadio.IsChecked == true)
+                {
+                    (ok, msg) = await _wwbota.PostSelfSpotAsync(
+                        CallsignBox.Text.Trim().ToUpperInvariant(),
+                        ReferenceBox.Text.Trim().ToUpperInvariant(),
+                        freqMhz,
                         mode,
                         CommentBox.Text.Trim());
                 }

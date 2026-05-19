@@ -17,8 +17,9 @@ namespace xOTACompanion
         private AppConfig _config = ConfigService.Load();
         private readonly ObservableCollection<SpotModel> _allSpots = new();
         private ICollectionView? _view;
-        private readonly PotaService _pota = new();
-        private readonly SotaService _sota = new();
+        private readonly PotaService   _pota   = new();
+        private readonly SotaService   _sota   = new();
+        private readonly WwbotaService _wwbota = new();
         private DispatcherTimer? _refreshTimer;
         private DateTime _lastRefresh = DateTime.MinValue;
         private bool _isLoadingSpots;
@@ -178,8 +179,9 @@ namespace xOTACompanion
         {
             if (obj is not SpotModel s) return false;
 
-            if (PotaFilter.IsChecked == true && s.Source != SpotSource.POTA) return false;
-            if (SotaFilter.IsChecked == true && s.Source != SpotSource.SOTA) return false;
+            if (PotaFilter.IsChecked  == true && s.Source != SpotSource.POTA)   return false;
+            if (SotaFilter.IsChecked  == true && s.Source != SpotSource.SOTA)   return false;
+            if (BotaFilter.IsChecked  == true && s.Source != SpotSource.WWBOTA) return false;
 
             var band = BandFilter.SelectedItem?.ToString();
             if (!string.IsNullOrEmpty(band) && band != "All" && s.Band != band) return false;
@@ -219,8 +221,9 @@ namespace xOTACompanion
             {
                 SetStatus("Fetching spots…");
                 var tasks = new List<Task<List<SpotModel>>>();
-                if (_config.ShowPota) tasks.Add(_pota.FetchSpotsAsync());
-                if (_config.ShowSota) tasks.Add(_sota.FetchSpotsAsync());
+                if (_config.ShowPota)   tasks.Add(_pota.FetchSpotsAsync());
+                if (_config.ShowSota)   tasks.Add(_sota.FetchSpotsAsync());
+                if (_config.ShowWwbota) tasks.Add(_wwbota.FetchSpotsAsync());
 
                 var results = await Task.WhenAll(tasks);
 
@@ -279,9 +282,10 @@ namespace xOTACompanion
 
         private void UpdateStatusBar()
         {
-            int pota = _allSpots.Count(s => s.Source == SpotSource.POTA);
-            int sota = _allSpots.Count(s => s.Source == SpotSource.SOTA);
-            StatusLabel.Text  = $"{_allSpots.Count} spots  (POTA: {pota}  SOTA: {sota})";
+            int pota  = _allSpots.Count(s => s.Source == SpotSource.POTA);
+            int sota  = _allSpots.Count(s => s.Source == SpotSource.SOTA);
+            int bota  = _allSpots.Count(s => s.Source == SpotSource.WWBOTA);
+            StatusLabel.Text  = $"{_allSpots.Count} spots  (POTA: {pota}  SOTA: {sota}  BOTA: {bota})";
             StatusRight.Text  = $"Refreshes every {_config.AutoRefreshMinutes} min";
         }
         private void SetStatus(string msg) => StatusLabel.Text = msg;

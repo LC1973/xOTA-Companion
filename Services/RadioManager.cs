@@ -66,10 +66,14 @@ namespace xOTACompanion.Services
             {
                 if (_active == null || !_active.IsConnected) return;
                 _active.SetFrequency(freqMhz);
-                if (!string.IsNullOrWhiteSpace(mode))
-                    _active.SetMode(mode);
+                // If the spot carries no mode, infer a default from frequency so the radio
+                // doesn't get stuck in whatever mode was used for the previous spot (e.g. CW).
+                string effectiveMode = string.IsNullOrWhiteSpace(mode)
+                    ? (freqMhz < 10.0 ? "LSB" : "USB")
+                    : mode;
+                _active.SetMode(effectiveMode);
                 Logger.Instance.Log(LogCategory.Radio,
-                    $"RadioManager: Tune → {freqMhz:F3} MHz {mode}");
+                    $"RadioManager: Tune → {freqMhz:F3} MHz {effectiveMode}{(string.IsNullOrWhiteSpace(mode) ? " (inferred)" : "")}");
             }
         }
 

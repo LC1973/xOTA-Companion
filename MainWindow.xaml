@@ -118,6 +118,8 @@
                              Checked="Filter_Changed" GroupName="src"/>
                 <RadioButton x:Name="SotaFilter" Content="⛰ SOTA" Style="{StaticResource FilterTab}"
                              Checked="Filter_Changed" GroupName="src"/>
+                <RadioButton x:Name="BotaFilter" Content="🏰 BOTA" Style="{StaticResource FilterTab}"
+                             Checked="Filter_Changed" GroupName="src"/>
                 <Separator Width="1" Background="{StaticResource DarkBorder}" Height="20" Margin="4,0"/>
                 <TextBlock Text="Band:" Foreground="{StaticResource DarkTextSecondary}" FontSize="11" VerticalAlignment="Center"/>
                 <ComboBox x:Name="BandFilter" Style="{StaticResource DarkComboBox}" Width="80" Height="22"

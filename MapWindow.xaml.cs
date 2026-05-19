@@ -102,7 +102,13 @@ namespace xOTACompanion
 
             var gcCoords = BuildGreatCircle(120);
 
-            string spotIcon   = _spot.Source == SpotSource.POTA ? "🌳" : "⛰️";
+            string spotIcon   = _spot.Source switch
+            {
+                SpotSource.POTA   => "🌳",
+                SpotSource.SOTA   => "⛰️",
+                SpotSource.WWBOTA => "🏰",
+                _                 => "📍"
+            };
             string sourceName = _spot.Source.ToString();
             string refHtml    = EH(_spot.Reference);
             string nameHtml   = EH(_spot.Name);

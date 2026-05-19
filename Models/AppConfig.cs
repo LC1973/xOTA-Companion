@@ -22,8 +22,9 @@ namespace xOTACompanion.Models
 
         // Spot fetching
         public int AutoRefreshMinutes { get; set; } = 2;
-        public bool ShowPota { get; set; } = true;
-        public bool ShowSota { get; set; } = true;  // default on; user may override in saved config
+        public bool ShowPota  { get; set; } = true;
+        public bool ShowSota  { get; set; } = true;   // default on; user may override in saved config
+        public bool ShowWwbota { get; set; } = true;
 
         // Display
         public string DistanceUnit { get; set; } = "km";  // "km" or "mi"
