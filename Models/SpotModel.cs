@@ -1,10 +1,28 @@
+using System.ComponentModel;
+
 namespace xOTACompanion.Models
 {
     /// <summary>
     /// Unified spot model covering both POTA and SOTA spots.
     /// </summary>
-    public class SpotModel
+    public class SpotModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private bool _isNew;
+        public bool IsNew
+        {
+            get => _isNew;
+            set
+            {
+                if (_isNew != value)
+                {
+                    _isNew = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsNew)));
+                }
+            }
+        }
+
         // --- Source info ---
         public SpotSource Source { get; set; }
 

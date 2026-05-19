@@ -53,6 +53,12 @@
                                FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Center"/>
                     <TextBlock x:Name="FreqModeLabel" Foreground="#FF00CC00"
                                FontSize="{StaticResource ContentFontSize}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="RadioConnectBtn"
+                            Style="{StaticResource SecondaryButton}"
+                            Height="22" Padding="8,0" FontSize="11"
+                            Visibility="Collapsed"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="RadioConnectBtn_Click"/>
                 </StackPanel>
 
                 <!-- Window controls -->

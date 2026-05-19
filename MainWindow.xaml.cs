@@ -23,6 +23,7 @@ namespace xOTACompanion
         private DispatcherTimer? _refreshTimer;
         private DateTime _lastRefresh = DateTime.MinValue;
         private bool _isLoadingSpots;
+        private IRadioService? _radioService;
 
         // ── construction ──────────────────────────────────────────────────────
         public MainWindow(bool skippedRadio = false)
@@ -130,14 +131,18 @@ namespace xOTACompanion
 
             svc.Connected        += () => Dispatcher.Invoke(() =>
             {
-                RadioDot.Fill   = (Brush)FindResource("SuccessGreen");
-                RadioLabel.Text = rc.FriendlyName;
+                RadioDot.Fill             = (Brush)FindResource("SuccessGreen");
+                RadioLabel.Text           = rc.FriendlyName;
+                RadioConnectBtn.Content   = "Disconnect";
+                RadioConnectBtn.IsEnabled = true;
             });
             svc.Disconnected     += () => Dispatcher.Invoke(() =>
             {
-                RadioDot.Fill   = (Brush)FindResource("ErrorRed");
-                RadioLabel.Text = "(disconnected)";
-                FreqModeLabel.Text = string.Empty;
+                RadioDot.Fill             = (Brush)FindResource("ErrorRed");
+                RadioLabel.Text           = "(disconnected)";
+                FreqModeLabel.Text        = string.Empty;
+                RadioConnectBtn.Content   = "⟳ Connect";
+                RadioConnectBtn.IsEnabled = true;
             });
             svc.RadioInfoUpdated += (freq, mode, pwr) => Dispatcher.Invoke(() =>
             {
@@ -150,8 +155,34 @@ namespace xOTACompanion
                     : new SolidColorBrush(Color.FromRgb(0x00, 0xCC, 0x00));
             });
 
+            _radioService              = svc;
+            RadioConnectBtn.Content    = "Connecting…";
+            RadioConnectBtn.IsEnabled  = false;
+            RadioConnectBtn.Visibility = System.Windows.Visibility.Visible;
             RadioManager.Instance.SetActiveRadio(svc);
             _ = svc.ConnectAsync();
+        }
+
+
+        // ── radio connect button ──────────────────────────────────────────────
+        private async void RadioConnectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_radioService == null) return;
+            if (_radioService.IsConnected)
+            {
+                _radioService.Disconnect();
+                // Disconnected event updates the button
+            }
+            else
+            {
+                RadioConnectBtn.Content   = "Connecting…";
+                RadioConnectBtn.IsEnabled = false;
+                bool ok = await _radioService.ConnectAsync();
+                // Re-enable in case the service didn't fire Connected/Disconnected
+                RadioConnectBtn.IsEnabled = true;
+                if (!ok && !_radioService.IsConnected)
+                    RadioConnectBtn.Content = "⟳ Connect";
+            }
         }
 
         // ── grid / filter setup ───────────────────────────────────────────────
@@ -261,12 +292,45 @@ namespace xOTACompanion
 
                 Dispatcher.Invoke(() =>
                 {
+                    // Track which spot keys existed before the refresh
+                    var existingKeys = _allSpots
+                        .Select(s => (s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant()))
+                        .ToHashSet();
+                    bool isFirstLoad = _lastRefresh == DateTime.MinValue;
+
                     _allSpots.Clear();
                     foreach (var s in sorted) _allSpots.Add(s);
+
                     _view?.Refresh();
                     _lastRefresh = DateTime.Now;
                     LastRefreshLabel.Text = $"Last: {_lastRefresh:HH:mm:ss}";
                     UpdateStatusBar();
+
+                    // Defer IsNew flag until after rows are rendered so DataTrigger
+                    // always sees a false→true transition and fires EnterActions.
+                    if (!isFirstLoad)
+                    {
+                        var toFlash = sorted
+                            .Where(s => !existingKeys.Contains(
+                                (s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant())))
+                            .ToList();
+
+                        if (toFlash.Count > 0)
+                        {
+                            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                            {
+                                foreach (var s in toFlash) s.IsNew = true;
+
+                                var resetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3.1) };
+                                resetTimer.Tick += (_, _) =>
+                                {
+                                    foreach (var s in toFlash) s.IsNew = false;
+                                    resetTimer.Stop();
+                                };
+                                resetTimer.Start();
+                            }));
+                        }
+                    }
                 });
             }
             catch (Exception ex)

@@ -434,15 +434,58 @@
 
     <Style x:Key="DarkDataGridRow" TargetType="DataGridRow">
         <Setter Property="Foreground" Value="{StaticResource DarkText}"/>
-        <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{StaticResource SelectionHighlight}"/>
-                <Setter Property="Foreground" Value="White"/>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#FF1A3A5A"/>
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridRow">
+                    <Border x:Name="RowBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <DataGridCellsPresenter
+                                ItemsPanel="{TemplateBinding ItemsPanel}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <!-- Full-row flash overlay; DataGrid cannot reset this -->
+                            <Rectangle x:Name="FlashOverlay"
+                                       Fill="#FF00CC00"
+                                       Opacity="0"
+                                       IsHitTestVisible="False"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="RowBorder" Property="Background" Value="{StaticResource SelectionHighlight}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RowBorder" Property="Background" Value="#FF1A3A5A"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsNew}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames
+                                            Storyboard.TargetName="FlashOverlay"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:3"
+                                            FillBehavior="Stop">
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:0.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:0.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:1.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:1.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:2.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:2.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:3.0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="DarkDataGridCell" TargetType="DataGridCell">
