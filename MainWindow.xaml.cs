@@ -439,9 +439,8 @@ namespace xOTACompanion
                     "  2.  Copy your Default public token from\n" +
                     "       account.mapbox.com/access-tokens\n" +
                     "       (it starts with  pk.)\n\n" +
-                    "  3.  Add a user environment variable:\n" +
-                    "       XOTA_MAPBOX_TOKEN = pk.eyJ1...\n\n" +
-                    "  4.  Restart xOTA Companion.\n",
+                    "  3.  Open Settings (⚙) and paste the token\n" +
+                    "       into the Mapbox Token field, then Save.\n",
                     "Maps — setup required",
                     owner: this);
                 return;
