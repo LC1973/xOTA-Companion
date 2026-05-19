@@ -17,7 +17,8 @@ A Windows desktop app for POTA, SOTA, and WWBOTA (Bunkers on the Air) spot-chase
 | Radio | Interface |
 |---|---|
 | Expert Electronics ExpertSDR v3 | TCI |
-| Yaesu FTX-1 | CAT (CI-V serial) |
+| Yaesu FTX-1 | CAT |
+| Icom IC-7300 | CAT (CI-V serial) |
 
 Other TCI-capable SDRs and CAT-compatible rigs should work but have not been tested. Please open an issue if you have results to share.
 
