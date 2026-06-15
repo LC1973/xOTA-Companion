@@ -29,12 +29,14 @@ namespace xOTACompanion
             if (!_config.LoadedFromGreenLogger)
             {
                 StationSection.Visibility = Visibility.Visible;
-                RadiosSection.Visibility  = Visibility.Visible;
                 MyCallsignBox.Text        = _config.MyCallsign;
                 MyLocatorBox.Text         = _config.MyLocator;
                 MapboxTokenBox.Text       = _config.MapboxAccessToken;
-                RefreshRadioList();
             }
+            // Radios section is always shown so CI-V address (and other radio-specific
+            // settings) can be edited regardless of whether GreenLogger is active.
+            RadiosSection.Visibility = Visibility.Visible;
+            RefreshRadioList();
 
             RefreshOperatorList();
         }

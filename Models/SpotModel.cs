@@ -23,6 +23,22 @@ namespace xOTACompanion.Models
             }
         }
 
+        private bool _isGoingQrt;
+        public bool IsGoingQrt
+        {
+            get => _isGoingQrt;
+            set
+            {
+                if (_isGoingQrt != value)
+                {
+                    _isGoingQrt = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsGoingQrt)));
+                }
+            }
+        }
+
+        public bool IsQrt => Comments?.IndexOf("QRT", StringComparison.OrdinalIgnoreCase) >= 0;
+
         // --- Source info ---
         public SpotSource Source { get; set; }
 

@@ -451,9 +451,18 @@
                                        Fill="#FF00CC00"
                                        Opacity="0"
                                        IsHitTestVisible="False"/>
+                            <!-- Red flash overlay for QRT departure -->
+                            <Rectangle x:Name="QrtFlashOverlay"
+                                       Fill="#FFCC0000"
+                                       Opacity="0"
+                                       IsHitTestVisible="False"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!-- QRT background tint — lowest priority, overridden by selection/hover below -->
+                        <DataTrigger Binding="{Binding IsQrt}" Value="True">
+                            <Setter TargetName="RowBorder" Property="Background" Value="#80CC2020"/>
+                        </DataTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="RowBorder" Property="Background" Value="{StaticResource SelectionHighlight}"/>
                             <Setter Property="Foreground" Value="White"/>
@@ -467,6 +476,27 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames
                                             Storyboard.TargetName="FlashOverlay"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:3"
+                                            FillBehavior="Stop">
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:0.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:0.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:1.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:1.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:2.0"/>
+                                            <LinearDoubleKeyFrame Value="0.55" KeyTime="0:0:2.5"/>
+                                            <LinearDoubleKeyFrame Value="0"    KeyTime="0:0:3.0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsGoingQrt}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames
+                                            Storyboard.TargetName="QrtFlashOverlay"
                                             Storyboard.TargetProperty="Opacity"
                                             Duration="0:0:3"
                                             FillBehavior="Stop">

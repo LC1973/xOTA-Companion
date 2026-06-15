@@ -222,7 +222,8 @@ namespace xOTACompanion
 
             if (RemoveQrtFilter.IsChecked == true &&
                 s.Comments != null &&
-                s.Comments.IndexOf("QRT", StringComparison.OrdinalIgnoreCase) >= 0)
+                s.Comments.IndexOf("QRT", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                !s.IsGoingQrt)
                 return false;
 
             var q = SearchBox.Text.Trim();
@@ -296,7 +297,23 @@ namespace xOTACompanion
                     var existingKeys = _allSpots
                         .Select(s => (s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant()))
                         .ToHashSet();
+                    var previouslyQrtKeys = _allSpots
+                        .Where(s => s.IsQrt)
+                        .Select(s => (s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant()))
+                        .ToHashSet();
                     bool isFirstLoad = _lastRefresh == DateTime.MinValue;
+
+                    // Pre-flag newly-QRT spots so they survive the filter during the flash
+                    List<SpotModel> toFlashQrt = new();
+                    if (!isFirstLoad && RemoveQrtFilter.IsChecked == true)
+                    {
+                        toFlashQrt = sorted
+                            .Where(s => s.IsQrt
+                                && existingKeys.Contains((s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant()))
+                                && !previouslyQrtKeys.Contains((s.Source, s.Activator.ToUpperInvariant(), s.Reference.ToUpperInvariant())))
+                            .ToList();
+                        foreach (var s in toFlashQrt) s.IsGoingQrt = true;
+                    }
 
                     _allSpots.Clear();
                     foreach (var s in sorted) _allSpots.Add(s);
@@ -328,6 +345,21 @@ namespace xOTACompanion
                                     resetTimer.Stop();
                                 };
                                 resetTimer.Start();
+                            }));
+                        }
+
+                        if (toFlashQrt.Count > 0)
+                        {
+                            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                            {
+                                var removeTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3.1) };
+                                removeTimer.Tick += (_, _) =>
+                                {
+                                    foreach (var s in toFlashQrt) s.IsGoingQrt = false;
+                                    _view?.Refresh();
+                                    removeTimer.Stop();
+                                };
+                                removeTimer.Start();
                             }));
                         }
                     }

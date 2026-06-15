@@ -84,9 +84,25 @@ namespace xOTACompanion.Services
                 }
 
                 // --- Radios ---
-                var glRadios = ReadRadios(connection);
+                bool glHasCivAddr = TableHasColumn(connection, "Radios", "CIVAddress");
+                var glRadios = ReadRadios(connection, glHasCivAddr);
                 if (glRadios.Count > 0)
+                {
+                    // When GL's schema pre-dates CI-V support, carry forward any CI-V address
+                    // already saved in xOTA's own config for the matching radio.
+                    if (!glHasCivAddr)
+                    {
+                        var civMap = cfg.Radios
+                            .Where(r => r.ControlType == "CIV")
+                            .ToDictionary(r => r.RadioId, r => r.CIVAddress);
+                        foreach (var r in glRadios.Where(r => r.ControlType == "CIV"))
+                        {
+                            if (civMap.TryGetValue(r.RadioId, out int addr))
+                                r.CIVAddress = addr;
+                        }
+                    }
                     cfg.Radios = glRadios;
+                }
 
                 // --- Active radio ---
                 // Only use GreenLogger's active radio as a default when xOTA has no
@@ -146,13 +162,25 @@ namespace xOTACompanion.Services
                 .ToList();
         }
 
-        private static List<RadioConfig> ReadRadios(SqliteConnection connection)
+        private static bool TableHasColumn(SqliteConnection connection, string table, string column)
+        {
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = $"PRAGMA table_info({table})";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+                if (reader.GetString(1).Equals(column, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            return false;
+        }
+
+        private static List<RadioConfig> ReadRadios(SqliteConnection connection, bool includeCivAddress)
         {
             var cmd = connection.CreateCommand();
             cmd.CommandText =
                 "SELECT Id, FriendlyName, ControlType, IsDefault, " +
-                "       TCIHost, TCIPort, CATPortName, CATBaudRate " +
-                "FROM Radios ORDER BY IsDefault DESC, FriendlyName";
+                "       TCIHost, TCIPort, CATPortName, CATBaudRate" +
+                (includeCivAddress ? ", CIVAddress" : "") +
+                " FROM Radios ORDER BY IsDefault DESC, FriendlyName";
 
             var radios = new List<RadioConfig>();
             using var reader = cmd.ExecuteReader();
@@ -160,14 +188,17 @@ namespace xOTACompanion.Services
             {
                 radios.Add(new RadioConfig
                 {
-                    RadioId     = reader.GetInt32(0),
+                    RadioId      = reader.GetInt32(0),
                     FriendlyName = reader.GetString(1),
                     ControlType  = reader.GetString(2),
                     IsDefault    = reader.GetInt32(3) != 0,
                     TCIHost      = reader.IsDBNull(4) ? "127.0.0.1" : reader.GetString(4),
-                    TCIPort      = reader.IsDBNull(5) ? 40001 : reader.GetInt32(5),
-                    CATPortName  = reader.IsDBNull(6) ? "COM1"  : reader.GetString(6),
-                    CATBaudRate  = reader.IsDBNull(7) ? 38400  : reader.GetInt32(7),
+                    TCIPort      = reader.IsDBNull(5) ? 40001       : reader.GetInt32(5),
+                    CATPortName  = reader.IsDBNull(6) ? "COM1"      : reader.GetString(6),
+                    CATBaudRate  = reader.IsDBNull(7) ? 38400       : reader.GetInt32(7),
+                    // 0 = unset — caller carries over xOTA's saved address when GL's
+                    // schema pre-dates the column. RadioConfig.IsValid catches stray 0s.
+                    CIVAddress   = includeCivAddress && !reader.IsDBNull(8) ? reader.GetInt32(8) : 0,
                 });
             }
             return radios;

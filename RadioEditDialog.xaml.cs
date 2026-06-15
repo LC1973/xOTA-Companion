@@ -34,7 +34,10 @@ namespace xOTACompanion
             IsDefaultCheck.IsChecked = radio.IsDefault;
 
             TypeCombo.SelectedIndex = radio.ControlType switch { "CAT" => 1, "TCI" => 2, "CIV" => 3, _ => 0 };
-            CivAddressBox.Text = radio.CIVAddress.ToString("X2");
+            // Leave the box at its XAML default ("94") as a suggestion when the address
+            // is unset, so the user has a sensible starting point but must confirm/edit it.
+            if (radio.CIVAddress > 0)
+                CivAddressBox.Text = radio.CIVAddress.ToString("X2");
             CatPortCombo.SelectedItem = radio.CATPortName;
             BaudCombo.SelectedItem    = radio.CATBaudRate;
             if (BaudCombo.SelectedItem == null) BaudCombo.SelectedItem = 38400;
